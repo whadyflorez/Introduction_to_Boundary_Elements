@@ -1,0 +1,765 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\geometry{margin=2.5cm}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    urlcolor=blue!60!black,
+    citecolor=blue!60!black
+}
+
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue!70!black}\bfseries,
+    commentstyle=\color{green!50!black}\itshape,
+    stringstyle=\color{orange!80!black},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    numbersep=8pt,
+    frame=single,
+    rulecolor=\color{gray!40},
+    backgroundcolor=\color{gray!5},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=4
+}
+
+\title{\textbf{Evaluación de Integrales de Dominio mediante\\
+Dual Reciprocity y el Método de Soluciones Particulares}\\[0.5em]
+\large Notas para un Curso de Maestría en Boundary Element Method}
+\author{W.F. Florez\\
+\small Wessex Institute of Technology}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% ─────────────────────────────────────────────────────────────
+\section{Planteamiento del Problema}
+% ─────────────────────────────────────────────────────────────
+
+El objetivo es puramente de cuadratura: convertir una integral de dominio
+
+\begin{equation}
+    I = \int_\Omega b(x)\, d\Omega_x
+\end{equation}
+
+en una suma de integrales de frontera, sin necesidad de discretizar el interior
+del dominio $\Omega$. Esto se logra mediante el \textbf{método de soluciones
+particulares} combinado con funciones de base radial (RBF), en el espíritu del
+método de Dual Reciprocity (DR-BEM).
+
+% ─────────────────────────────────────────────────────────────
+\section{Conversión de Integral de Dominio a Integrales de Frontera}
+% ─────────────────────────────────────────────────────────────
+
+\subsection{Paso 1 — Aproximación RBF}
+
+Se aproxima $b(x)$ en términos de funciones radiales evaluadas en $N$ nodos de
+colocación $\{x_j\}_{j=1}^N \subset \Omega$:
+
+\begin{equation}
+    b(x) \approx \sum_{j=1}^{N} \alpha_j f_j(r_j), \qquad r_j = \|x - x_j\|
+\end{equation}
+
+\subsection{Paso 2 — Condición del Método de Soluciones Particulares}
+
+Se exige que cada función base sea el Laplaciano de alguna función
+$\hat{\phi}_j$:
+
+\begin{equation}
+    f_j(r_j) = \nabla^2 \hat{\phi}_j(r_j)
+\end{equation}
+
+de modo que la aproximación queda:
+
+\begin{equation}
+    b(x) \approx \sum_{j=1}^{N} \alpha_j \nabla^2 \hat{\phi}_j(r_j)
+\end{equation}
+
+\subsection{Paso 3 — Sustitución en la Integral}
+
+\begin{equation}
+    I \approx \sum_{j=1}^{N} \alpha_j \int_\Omega \nabla^2 \hat{\phi}_j\, d\Omega_x
+\end{equation}
+
+\subsection{Paso 4 — Teorema de la Divergencia}
+
+Aplicando $\displaystyle\int_\Omega \nabla^2 \hat{\phi}\, d\Omega =
+\int_\Gamma \nabla\hat{\phi} \cdot \mathbf{n}\, d\Gamma =
+\int_\Gamma \frac{\partial \hat{\phi}}{\partial n}\, d\Gamma$:
+
+\begin{equation}
+\boxed{
+    I \approx \sum_{j=1}^{N} \alpha_j \int_\Gamma
+    \frac{\partial \hat{\phi}_j}{\partial n}\, d\Gamma_x
+}
+\end{equation}
+
+La integral de dominio queda expresada como una suma de integrales de frontera,
+cada una evaluable numéricamente con cuadratura estándar sobre $\Gamma$.
+
+\subsection{Determinación de los Coeficientes $\alpha_j$ por Colocación}
+
+Se conoce $b(x)$ en los $N$ nodos de colocación $\{x_i\}_{i=1}^N \subset
+\Omega$. Evaluando la aproximación en cada punto:
+
+\begin{equation}
+    b(x_i) = \sum_{j=1}^{N} \alpha_j f_j(r_{ij}), \qquad
+    r_{ij} = \|x_i - x_j\|
+\end{equation}
+
+lo que genera el sistema lineal:
+
+\begin{equation}
+    \mathbf{F}\boldsymbol{\alpha} = \mathbf{b}, \qquad F_{ij} = f_j(r_{ij})
+\end{equation}
+
+con solución:
+
+\begin{equation}
+    \boldsymbol{\alpha} = \mathbf{F}^{-1}\mathbf{b}
+\end{equation}
+
+\subsection{Generalización del Operador}
+
+El operador no necesita ser $\nabla^2$. Sea $\mathcal{L}$ un operador
+diferencial lineal para el cual existe una identidad de Green que permita
+convertir integrales de dominio en integrales de frontera. Se exige:
+
+\begin{equation}
+    f_j = \mathcal{L}\hat{\phi}_j
+\end{equation}
+
+y la conversión queda:
+
+\begin{equation}
+    I \approx \sum_{j=1}^{N} \alpha_j \int_\Omega \mathcal{L}\hat{\phi}_j\,
+    d\Omega_x = \sum_{j=1}^{N} \alpha_j \int_\Gamma
+    \mathcal{B}[\hat{\phi}_j]\, d\Gamma_x
+\end{equation}
+
+donde $\mathcal{B}$ es el operador de frontera que surge de la identidad de
+Green asociada a $\mathcal{L}$.
+
+\textbf{Sobre la elección del operador:}
+\begin{itemize}
+    \item \textbf{Caso ideal:} $\mathcal{L}$ está relacionado con la naturaleza
+    de $b(x)$, lo que garantiza que la aproximación sea eficiente y bien
+    condicionada.
+    \item \textbf{Caso general:} sin una PDE de fondo que sugiera $\mathcal{L}$,
+    la elección es heurística. $\nabla^2$ es la opción natural por su
+    simplicidad y porque las RBFs clásicas tienen $\hat{\phi}$ conocidas en
+    forma cerrada.
+    \item \textbf{Pregunta abierta pedagógicamente poderosa:} ¿cambia la
+    calidad de la cuadratura resultante según el operador elegido,
+    independientemente de que la integral de frontera sea exactamente evaluable?
+\end{itemize}
+
+% ─────────────────────────────────────────────────────────────
+\section{Obtención de $\hat{\phi}(r)$ en 2D}
+% ─────────────────────────────────────────────────────────────
+
+En 2D se resuelve $\nabla^2\hat{\phi} = f(r)$ en coordenadas polares:
+
+\begin{equation}
+    \frac{1}{r}\frac{d}{dr}\left(r\frac{d\hat{\phi}}{dr}\right) = f(r)
+\end{equation}
+
+integrando dos veces directamente. La primera integración multiplica por $r$ e
+integra; la constante de integración se toma cero por regularidad en $r=0$.
+
+\subsection{Caso 1: $f(r) = 1 + r^3$}
+
+\textbf{Primera integración:}
+
+\begin{equation}
+    \frac{d}{dr}\left(r\frac{d\hat{\phi}}{dr}\right) = r + r^4
+    \implies r\frac{d\hat{\phi}}{dr} = \frac{r^2}{2} + \frac{r^5}{5}
+    \implies \frac{d\hat{\phi}}{dr} = \frac{r}{2} + \frac{r^4}{5}
+\end{equation}
+
+\textbf{Segunda integración:}
+
+\begin{equation}
+\boxed{
+    \hat{\phi}(r) = \frac{r^2}{4} + \frac{r^5}{25}
+}
+\end{equation}
+
+Completamente algebraica, sin logaritmos ni funciones especiales.
+
+\subsection{Caso 2: Multiquadrics $f(r) = (r^2 + c^2)^{1/2}$}
+
+\textbf{Primera integración:}
+
+\begin{equation}
+    r\frac{d\hat{\phi}}{dr} = \int r(r^2+c^2)^{1/2}\,dr
+    = \frac{1}{3}(r^2+c^2)^{3/2}
+    \implies \frac{d\hat{\phi}}{dr} = \frac{(r^2+c^2)^{3/2}}{3r}
+\end{equation}
+
+\textbf{Segunda integración} (usando la integral estándar
+$\int \frac{(r^2+c^2)^{3/2}}{r}\,dr$):
+
+\begin{equation}
+\boxed{
+    \hat{\phi}(r) = \frac{(r^2+c^2)^{3/2}}{9}
+    + \frac{c^2\sqrt{r^2+c^2}}{3}
+    - \frac{c^3}{3}\ln\!\left(\frac{c+\sqrt{r^2+c^2}}{r}\right)
+}
+\end{equation}
+
+El término logarítmico no diverge en $r=0$ cuando $c>0$, ya que el parámetro
+de forma $c$ regulariza la singularidad. Esta es una ventaja importante de la
+multiquadric sobre otras RBFs.
+
+\subsection{Tabla Comparativa}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+$f(r)$ & $\hat{\phi}(r)$ & Observación \\
+\midrule
+$1 + r^3$ & $\dfrac{r^2}{4} + \dfrac{r^5}{25}$ & Completamente algebraica \\[1.2em]
+$(r^2+c^2)^{1/2}$ &
+$\dfrac{(r^2+c^2)^{3/2}}{9} + \dfrac{c^2\sqrt{r^2+c^2}}{3}
+- \dfrac{c^3}{3}\ln\!\left(\dfrac{c+\sqrt{r^2+c^2}}{r}\right)$ &
+Logaritmo regularizado por $c>0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Observación:} para $f(r) = \sum a_k r^k$ (polinomio en $r$), la
+integración produce siempre potencias de $r$ — forma cerrada algebraica
+garantizada. La multiquadric introduce el término logarítmico inevitablemente
+por la raíz cuadrada.
+
+% ─────────────────────────────────────────────────────────────
+\section{Derivada Normal $\partial\hat{\phi}/\partial n$}
+% ─────────────────────────────────────────────────────────────
+
+Usando la regla de la cadena, dado que $\hat{\phi} = \hat{\phi}(r)$ con
+$r = \|x - x_j\|$:
+
+\begin{equation}
+    \frac{\partial\hat{\phi}}{\partial n}
+    = \frac{d\hat{\phi}}{dr}\frac{\partial r}{\partial n}
+    = \frac{d\hat{\phi}}{dr}\,\frac{(x - x_j)\cdot\mathbf{n}}{r}
+\end{equation}
+
+El factor $\frac{(x-x_j)\cdot\mathbf{n}}{r} = \cos\theta$ es puramente
+geométrico y común a ambos casos.
+
+\subsection{Caso 1: $f(r) = 1 + r^3$}
+
+\begin{equation}
+    \frac{d\hat{\phi}}{dr} = \frac{r}{2} + \frac{r^4}{5}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    \frac{\partial\hat{\phi}}{\partial n}
+    = \left(\frac{1}{2} + \frac{r^3}{5}\right)(x - x_j)\cdot\mathbf{n}
+}
+\end{equation}
+
+Completamente regular para cualquier configuración de nodos.
+
+\subsection{Caso 2: Multiquadrics $f(r) = (r^2+c^2)^{1/2}$}
+
+Derivando $\hat{\phi}$ término a término:
+
+\begin{align}
+    \frac{d}{dr}\left[\frac{(r^2+c^2)^{3/2}}{9}\right]
+    &= \frac{r(r^2+c^2)^{1/2}}{3} \\[0.5em]
+    \frac{d}{dr}\left[\frac{c^2(r^2+c^2)^{1/2}}{3}\right]
+    &= \frac{c^2 r}{3(r^2+c^2)^{1/2}} \\[0.5em]
+    \frac{d}{dr}\left[-\frac{c^3}{3}
+    \ln\!\left(\frac{c+\sqrt{r^2+c^2}}{r}\right)\right]
+    &= \frac{c^3}{3r\sqrt{r^2+c^2}}
+\end{align}
+
+Sumando y simplificando:
+
+\begin{equation}
+    \frac{d\hat{\phi}}{dr} = \frac{r^4 + c^2 r^2 + c^3}{3r\sqrt{r^2+c^2}}
+\end{equation}
+
+\begin{equation}
+\boxed{
+    \frac{\partial\hat{\phi}}{\partial n}
+    = \frac{r^4 + c^2 r^2 + c^3}{3r^2\sqrt{r^2+c^2}}
+    \,(x - x_j)\cdot\mathbf{n}
+}
+\end{equation}
+
+\textbf{Regularidad:} cuando $c>0$, al tomar $r\to 0$ se tiene
+$\frac{\partial\hat{\phi}}{\partial n} \to \frac{c^2}{3}\,\frac{(x-x_j)\cdot\mathbf{n}}{r}$,
+donde el factor $\cos\theta$ es el que controla el comportamiento near-singular —
+exactamente como en el kernel BEM clásico $\partial u^*/\partial n$.
+
+% ─────────────────────────────────────────────────────────────
+\section{Análisis de Singularidades}
+% ─────────────────────────────────────────────────────────────
+
+\textbf{Configuración geométrica:} los nodos de colocación $\{x_j\}$ están en
+$\Omega$ (interior), y la integración $\int_\Gamma \frac{\partial\hat{\phi}_j}
+{\partial n}\,d\Gamma$ involucra el radio $r_j = \|x - x_j\|$ con $x\in\Gamma$.
+Dado que $x_j\in\Omega$ y $x\in\Gamma$:
+
+\begin{equation}
+    r_{j,\min} = \mathrm{dist}(x_j, \Gamma) > 0
+\end{equation}
+
+por lo que \textbf{no hay singularidad verdadera} en la integración sobre
+$\Gamma$ — se trata de una \textbf{near-singularity} cuya severidad depende de
+qué tan cerca estén los nodos internos de la frontera.
+
+\textbf{El caso problemático} surge si se permite $x_j\in\Gamma$ (colocación
+sobre la frontera). En ese caso $r_j\to 0$ cuando el punto de integración
+$x\in\Gamma$ se acerca a $x_j\in\Gamma$, produciendo:
+
+\begin{itemize}
+    \item Para $1+r^3$: $\hat{\phi}$ regular, pero $d\hat{\phi}/dr\to 0$
+    conforme $r\to 0$, sin singularidad.
+    \item Para MQ: singularidad logarítmica en $\frac{\partial\hat{\phi}}
+    {\partial n}$ cuando $r\to 0$.
+\end{itemize}
+
+Las estrategias disponibles para ese caso son las del BEM clásico:
+integración analítica local, sustracción de singularidad, o transformaciones
+de coordenadas (transformación de Telles).
+
+% ─────────────────────────────────────────────────────────────
+\section{Vector Normal sobre Curvas y Superficies Paramétricas}
+% ─────────────────────────────────────────────────────────────
+
+\subsection{Caso 2D: Curva Plana Parametrizada}
+
+Sea la curva $\Gamma$ parametrizada por $t\in[a,b]$:
+$\mathbf{x}(t) = (x(t),\, y(t))^T$.
+
+El \textbf{vector tangente} es $\mathbf{T} = \mathbf{x}'(t) = (x'(t),\,y'(t))^T$.
+
+El \textbf{vector normal exterior unitario} se obtiene rotando $\mathbf{T}$
+en $90°$ hacia afuera:
+
+\begin{equation}
+    \mathbf{n} = \frac{1}{\|\mathbf{T}\|}
+    \begin{pmatrix} y'(t) \\ -x'(t) \end{pmatrix},
+    \qquad \|\mathbf{T}\| = \sqrt{x'^2 + y'^2} = \frac{d\Gamma}{dt}
+\end{equation}
+
+La derivada normal integrada sobre $\Gamma$ queda:
+
+\begin{equation}
+    \frac{\partial\hat{\phi}}{\partial n}\,d\Gamma
+    = \nabla\hat{\phi}\cdot\mathbf{n}\,d\Gamma
+    = \left(\frac{\partial\hat{\phi}}{\partial x}y'
+    - \frac{\partial\hat{\phi}}{\partial y}x'\right)dt
+\end{equation}
+
+El jacobiano \textbf{cancela} al normalizador — no hace falta calcular
+$\|\mathbf{T}\|$ explícitamente.
+
+\subsection{Caso 3D: Superficie Parametrizada}
+
+Sea la superficie $\Gamma$ parametrizada por $(s,t)\in\mathcal{D}$:
+$\mathbf{x}(s,t) = (x,y,z)^T$.
+
+Los \textbf{vectores tangentes} son $\mathbf{T}_s = \partial\mathbf{x}/\partial s$
+y $\mathbf{T}_t = \partial\mathbf{x}/\partial t$.
+
+El \textbf{vector normal} (no unitario):
+
+\begin{equation}
+    \mathbf{N} = \mathbf{T}_s\times\mathbf{T}_t
+    = \begin{vmatrix}
+        \mathbf{e}_1 & \mathbf{e}_2 & \mathbf{e}_3 \\
+        \partial x/\partial s & \partial y/\partial s & \partial z/\partial s \\
+        \partial x/\partial t & \partial y/\partial t & \partial z/\partial t
+    \end{vmatrix}
+\end{equation}
+
+El \textbf{elemento de área}: $d\Gamma = \|\mathbf{N}\|\,ds\,dt$.
+
+La derivada normal integrada:
+
+\begin{equation}
+    \frac{\partial\hat{\phi}}{\partial n}\,d\Gamma
+    = \nabla\hat{\phi}\cdot\mathbf{N}\,ds\,dt
+\end{equation}
+
+El normalizador cancela de nuevo — solo se necesita $\mathbf{N}$ sin normalizar.
+
+\subsection{Tabla Resumen}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+ & 2D & 3D \\
+\midrule
+Parámetros & $t$ & $s,\,t$ \\
+Tangentes & $\mathbf{T} = \mathbf{x}'(t)$ & $\mathbf{T}_s,\,\mathbf{T}_t$ \\
+Normal no unitaria & $(y',\,-x')$ & $\mathbf{T}_s\times\mathbf{T}_t$ \\
+Jacobiano & $\sqrt{x'^2+y'^2}$ & $\|\mathbf{T}_s\times\mathbf{T}_t\|$ \\
+Forma integrada & $\nabla\hat{\phi}\cdot(y',-x')\,dt$
+    & $\nabla\hat{\phi}\cdot\mathbf{N}\,ds\,dt$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ─────────────────────────────────────────────────────────────
+\section{Discretización con Elementos Constantes en 2D}
+% ─────────────────────────────────────────────────────────────
+
+\subsection{Geometría del Elemento}
+
+Se divide $\Gamma$ en $N_e$ elementos rectos $\Gamma_k$, cada uno definido por
+dos nodos extremos $\mathbf{x}_k^1$ y $\mathbf{x}_k^2$, con el
+\textbf{nodo de colocación central}:
+
+\begin{equation}
+    \mathbf{x}_k^c = \frac{\mathbf{x}_k^1 + \mathbf{x}_k^2}{2}
+\end{equation}
+
+Parametrización local con $t\in[-1,1]$:
+
+\begin{equation}
+    \mathbf{x}(t) = \frac{1-t}{2}\mathbf{x}_k^1 + \frac{1+t}{2}\mathbf{x}_k^2
+\end{equation}
+
+Las derivadas son constantes sobre cada elemento:
+
+\begin{equation}
+    x'(t) = \frac{x_k^2 - x_k^1}{2}, \qquad y'(t) = \frac{y_k^2 - y_k^1}{2}
+\end{equation}
+
+\subsection{Jacobiano y Normal}
+
+El jacobiano es constante en cada elemento:
+
+\begin{equation}
+    J_k = \frac{L_k}{2},
+    \qquad L_k = \sqrt{(x_k^2-x_k^1)^2 + (y_k^2-y_k^1)^2}
+\end{equation}
+
+El vector normal exterior unitario, también constante:
+
+\begin{equation}
+    \mathbf{n}_k = \frac{1}{L_k}
+    \begin{pmatrix} y_k^2 - y_k^1 \\ -(x_k^2 - x_k^1) \end{pmatrix}
+\end{equation}
+
+\subsection{La Integral sobre $\Gamma$}
+
+\begin{equation}
+    \int_\Gamma \frac{\partial\hat{\phi}_j}{\partial n}\,d\Gamma
+    = \sum_{k=1}^{N_e} \int_{\Gamma_k} \frac{\partial\hat{\phi}_j}{\partial n}
+    \,d\Gamma
+\end{equation}
+
+Con cuadratura de Gauss de $n_g$ puntos $\{t_p, w_p\}$:
+
+\begin{equation}
+    \int_{\Gamma_k}\frac{\partial\hat{\phi}_j}{\partial n}\,d\Gamma
+    \approx J_k \sum_{p=1}^{n_g} w_p\,\frac{d\hat{\phi}}{dr}\bigg|_{r_{jp}}
+    \frac{(\mathbf{x}(t_p) - \mathbf{x}_j)\cdot\mathbf{n}_k}{r_{jp}}
+\end{equation}
+
+\subsection{Resultado Final Ensamblado}
+
+\begin{equation}
+    \int_\Omega b(x)\,d\Omega \approx
+    \sum_{j=1}^{N}\alpha_j \sum_{k=1}^{N_e} J_k
+    \sum_{p=1}^{n_g} w_p
+    \frac{d\hat{\phi}}{dr}\bigg|_{r_{jp}}
+    \frac{(\mathbf{x}(t_p)-\mathbf{x}_j)\cdot\mathbf{n}_k}{r_{jp}}
+\end{equation}
+
+Matricialmente, definiendo el vector $\mathbf{q}$ con componentes:
+
+\begin{equation}
+    q_j = \sum_{k=1}^{N_e} J_k \sum_{p=1}^{n_g} w_p
+    \frac{d\hat{\phi}}{dr}\bigg|_{r_{jp}}
+    \frac{(\mathbf{x}(t_p)-\mathbf{x}_j)\cdot\mathbf{n}_k}{r_{jp}}
+\end{equation}
+
+el resultado final es simplemente:
+
+\begin{equation}
+    \boxed{I \approx \mathbf{q}^T\boldsymbol{\alpha}
+    = \mathbf{q}^T \mathbf{F}^{-1}\mathbf{b}}
+\end{equation}
+
+% ─────────────────────────────────────────────────────────────
+\section{Pseudocódigo}
+% ─────────────────────────────────────────────────────────────
+
+\begin{lstlisting}[language={},basicstyle=\ttfamily\small,
+                   frame=single,backgroundcolor=\color{gray!5},
+                   rulecolor=\color{gray!40}]
+DATOS GEOMETRICOS
+  Definir 4 elementos sobre los 4 lados del cuadrado [0,1]^2
+  Cada elemento: nodo extremo 1, nodo extremo 2, nodo central, normal exterior
+
+NODOS DE COLOCACION INTERNOS
+  Colocar N puntos x_j dentro de Omega (no sobre Gamma)
+  Evaluar b(x_j) en cada nodo -> vector b
+
+SISTEMA DE COLOCACION RBF
+  Para cada par (i,j) calcular r_ij = ||x_i - x_j||
+  Armar matriz F con F_ij = f(r_ij) = 1 + r_ij^3
+  Resolver F * alpha = b  ->  alpha = F^{-1} * b
+
+VECTOR q  (integrales de frontera)
+  Para cada nodo fuente j = 1,...,N
+    q_j = 0
+    Para cada elemento k = 1,...,4
+      Para cada punto de Gauss p = 1,...,ng
+        Calcular x(tp) sobre elemento k
+        Calcular r_jp = ||x(tp) - x_j||
+        Calcular dphi_dr = r_jp/2 + r_jp^4/5
+        Calcular (x(tp) - x_j) . n_k
+        q_j += w_p * J_k * (dphi_dr / r_jp) * dot
+
+RESULTADO
+  I_aprox = q^T * alpha
+  Comparar con I_analitica = 2/3
+\end{lstlisting}
+
+% ─────────────────────────────────────────────────────────────
+\section{Ejemplo Numérico: Dominio Cuadrado $[0,1]^2$}
+% ─────────────────────────────────────────────────────────────
+
+\subsection{Configuración}
+
+\begin{itemize}
+    \item Dominio: $\Omega = [0,1]^2$
+    \item Función: $b(x,y) = x^2 + y^2$
+    \item RBF: $f(r) = 1 + r^3 \implies \hat{\phi}(r) = r^2/4 + r^5/25$
+    \item Elementos de contorno: 4 elementos constantes, uno por cada lado
+    \item Nodos de colocación internos: grilla $4\times 4 = 16$ puntos en
+    $[0.1, 0.9]^2$
+    \item Puntos de Gauss por elemento: $n_g = 4$
+\end{itemize}
+
+\textbf{Solución analítica:}
+
+\begin{equation}
+    I = \int_0^1\int_0^1 (x^2+y^2)\,dx\,dy
+    = \frac{1}{3} + \frac{1}{3} = \frac{2}{3}
+\end{equation}
+
+La geometría de los 4 elementos es:
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Lado & Extremo 1 & Extremo 2 & Normal $\mathbf{n}_k$ \\
+\midrule
+Bottom & $(0,0)$ & $(1,0)$ & $(0,-1)$ \\
+Right  & $(1,0)$ & $(1,1)$ & $(1,0)$  \\
+Top    & $(1,1)$ & $(0,1)$ & $(0,1)$  \\
+Left   & $(0,1)$ & $(0,0)$ & $(-1,0)$ \\
+\bottomrule
+\end{tabular}
+\end{center} 
+
+\subsection{Código Python}
+
+\begin{lstlisting}[language=Python]
+"""
+Evaluacion de integral de dominio mediante Dual Reciprocity (DR)
+Dominio: cuadrado unitario [0,1]^2
+Funcion: b(x,y) = x^2 + y^2
+RBF: f(r) = 1 + r^3  =>  phi(r) = r^2/4 + r^5/25
+Elementos constantes: 4 elementos, uno por cada lado
+Solucion analitica: I = 2/3
+"""
+
+import numpy as np
+
+
+# 1. FUNCIONES RBF Y SOLUCION PARTICULAR
+
+def f_rbf(r):
+    """RBF: f(r) = 1 + r^3"""
+    return 1.0 + r**3
+
+def phi(r):
+    """Solucion particular: phi(r) = r^2/4 + r^5/25"""
+    return r**2 / 4.0 + r**5 / 25.0
+
+def dphi_dr(r):
+    """Derivada: dphi/dr = r/2 + r^4/5"""
+    return r / 2.0 + r**4 / 5.0
+
+def b_func(x, y):
+    """Funcion a integrar"""
+    return x**2 + y**2
+
+# 2. GEOMETRIA: 4 ELEMENTOS CONSTANTES
+
+elements = np.array([
+    [0.0, 0.0,  1.0, 0.0],   # bottom
+    [1.0, 0.0,  1.0, 1.0],   # right
+    [1.0, 1.0,  0.0, 1.0],   # top
+    [0.0, 1.0,  0.0, 0.0],   # left
+])
+
+normals = np.array([
+    [ 0.0, -1.0],
+    [ 1.0,  0.0],
+    [ 0.0,  1.0],
+    [-1.0,  0.0],
+])
+
+def get_jacobian(elem):
+    x1, y1, x2, y2 = elem
+    L = np.sqrt((x2-x1)**2 + (y2-y1)**2)
+    return L / 2.0
+
+def get_point(elem, t):
+    x1, y1, x2, y2 = elem
+    x = 0.5*(1-t)*x1 + 0.5*(1+t)*x2
+    y = 0.5*(1-t)*y1 + 0.5*(1+t)*y2
+    return np.array([x, y])
+
+# 3. PUNTOS DE GAUSS en [-1,1]
+
+n_gauss = 4
+gauss_pts, gauss_wts = np.polynomial.legendre.leggauss(n_gauss)
+
+# 4. NODOS DE COLOCACION INTERNOS
+
+n_side = 4
+coords = np.linspace(0.1, 0.9, n_side)
+collocation_nodes = []
+for xi in coords:
+    for yi in coords:
+        collocation_nodes.append([xi, yi])
+collocation_nodes = np.array(collocation_nodes)
+N = len(collocation_nodes)
+
+# 5. SISTEMA RBF: F * alpha = b
+
+F_mat = np.zeros((N, N))
+for i in range(N):
+    for j in range(N):
+        r = np.linalg.norm(collocation_nodes[i] - collocation_nodes[j])
+        F_mat[i, j] = f_rbf(r)
+
+b_vec = np.array([b_func(p[0], p[1]) for p in collocation_nodes])
+alpha = np.linalg.solve(F_mat, b_vec)
+
+ 6. VECTOR q: integrales de frontera
+
+q_vec = np.zeros(N)
+
+for j in range(N):
+    xj = collocation_nodes[j]
+    q_j = 0.0
+    for k in range(4):
+        elem = elements[k]
+        nk   = normals[k]
+        Jk   = get_jacobian(elem)
+        for p in range(n_gauss):
+            tp   = gauss_pts[p]
+            wp   = gauss_wts[p]
+            xp   = get_point(elem, tp)
+            rvec = xp - xj
+            r    = np.linalg.norm(rvec)
+            if r < 1e-14:
+                continue
+            dphi = dphi_dr(r)
+            dot  = np.dot(rvec, nk)
+            q_j += wp * Jk * (dphi / r) * dot
+    q_vec[j] = q_j
+
+# 7. RESULTADO
+
+I_dr        = np.dot(q_vec, alpha)
+I_analitica = 2.0 / 3.0
+error       = abs(I_dr - I_analitica) / I_analitica * 100
+
+print(f"Integral analitica     : {I_analitica:.10f}")
+print(f"Integral DR (numerica) : {I_dr:.10f}")
+print(f"Error relativo         : {error:.6f} %")
+\end{lstlisting}
+
+\subsection{Resultado}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Cantidad & Valor \\
+\midrule
+Integral analítica      & $0.6666666667$ \\
+Integral DR (numérica)  & $0.6663737442$ \\
+Error relativo          & $0.043938\%$   \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Con solo 16 nodos internos, 4 elementos constantes y 4 puntos de Gauss,
+el error es menor al $0.05\%$.
+
+% ─────────────────────────────────────────────────────────────
+\section{Observaciones Pedagógicas y Extensiones}
+% ─────────────────────────────────────────────────────────────
+
+\subsection{Refinamiento y Convergencia}
+
+Hay tres experimentos naturales para los estudiantes:
+
+\begin{enumerate}
+    \item \textbf{Aumentar $n\_side$} de 4 a 6 u 8 y observar la caída del
+    error. Esto ilustra la convergencia del sistema de colocación RBF, no de
+    la cuadratura de Gauss, que ya es exacta con 4 puntos para funciones
+    suaves.
+    \item \textbf{Más elementos de contorno}: pasar de 4 a 8 o 16 elementos
+    por lado. El efecto es menor porque con elementos constantes la geometría
+    del cuadrado ya es exacta.
+    \item \textbf{Condicionamiento de $\mathbf{F}$}: imprimir
+    \texttt{np.linalg.cond(F\_mat)} para distintas distribuciones de nodos,
+    introduciendo la discusión de estabilidad de la interpolación RBF.
+\end{enumerate}
+
+\subsection{Pregunta de Examen Sugerida}
+
+\textit{¿Para qué clase de $f(r)$ está garantizada una $\hat{\phi}$ algebraica
+en 2D?} La respuesta es inmediata desde la estructura de la integración en
+coordenadas polares: para todo $f$ que sea un polinomio en $r$.
+
+\subsection{Limitaciones Conocidas}
+
+\begin{itemize}
+    \item No se pueden usar nodos de colocación sobre la frontera sin
+    técnicas de evaluación de integrales singulares o remoción de
+    singularidades.
+    \item La matriz $\mathbf{F}$ puede ser mal condicionada si los nodos
+    están mal distribuidos — punto de entrada natural a la discusión de
+    condicionamiento numérico en interpolación RBF.
+    \item La calidad de la cuadratura depende enteramente de qué tan bien
+    $\{f_j\}$ aproxima $b(x)$ — conexión directa con teoría de aproximación.
+\end{itemize}
+
+\end{document}

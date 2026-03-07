@@ -1,0 +1,35 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Planteamiento del Problema}{3}{section.1}%
+\contentsline {section}{\numberline {2}Conversión de Integral de Dominio a Integrales de Frontera}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Paso 1 — Aproximación RBF}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Paso 2 — Condición del Método de Soluciones Particulares}{3}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Paso 3 — Sustitución en la Integral}{3}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Paso 4 — Teorema de la Divergencia}{3}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.5}Determinación de los Coeficientes $\alpha _j$ por Colocación}{4}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Generalización del Operador}{4}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Obtención de $\hat {\phi }(r)$ en 2D}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Caso 1: $f(r) = 1 + r^3$}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Caso 2: Multiquadrics $f(r) = (r^2 + c^2)^{1/2}$}{5}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Tabla Comparativa}{6}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Derivada Normal $\partial \hat {\phi }/\partial n$}{6}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Caso 1: $f(r) = 1 + r^3$}{6}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Caso 2: Multiquadrics $f(r) = (r^2+c^2)^{1/2}$}{6}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Análisis de Singularidades}{7}{section.5}%
+\contentsline {section}{\numberline {6}Vector Normal sobre Curvas y Superficies Paramétricas}{7}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Caso 2D: Curva Plana Parametrizada}{7}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Caso 3D: Superficie Parametrizada}{8}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Tabla Resumen}{8}{subsection.6.3}%
+\contentsline {section}{\numberline {7}Discretización con Elementos Constantes en 2D}{8}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Geometría del Elemento}{8}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Jacobiano y Normal}{9}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}La Integral sobre $\Gamma $}{9}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Resultado Final Ensamblado}{9}{subsection.7.4}%
+\contentsline {section}{\numberline {8}Pseudocódigo}{10}{section.8}%
+\contentsline {section}{\numberline {9}Ejemplo Numérico: Dominio Cuadrado $[0,1]^2$}{10}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Configuración}{10}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Código Python}{11}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Resultado}{13}{subsection.9.3}%
+\contentsline {section}{\numberline {10}Observaciones Pedagógicas y Extensiones}{13}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Refinamiento y Convergencia}{13}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Pregunta de Examen Sugerida}{14}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Limitaciones Conocidas}{14}{subsection.10.3}%

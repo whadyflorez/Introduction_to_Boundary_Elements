@@ -1,0 +1,389 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\geometry{margin=2.5cm}
+
+\hypersetup{colorlinks=true, linkcolor=blue!60!black, citecolor=blue!60!black, urlcolor=blue!60!black}
+
+\newtheorem{hypothesis}{Hipotesis}
+\newtheorem{remark}{Observacion}
+
+\title{\textbf{Relacion entre el Termino Fuente $b(x)$\\
+y el Operador Diferencial $\mathcal{L}$}\\[0.5em]
+\large Teoria, Hipotesis y Literatura\\[0.3em]
+\normalsize Notas para un Curso de Maestria en Boundary Element Method}
+\author{W.F. Florez\\
+\small Wessex Institute of Technology}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% ─────────────────────────────────────────────────────────────
+\section{El Problema Central}
+% ─────────────────────────────────────────────────────────────
+
+Dentro del marco de conversion de integrales de dominio a integrales de frontera
+mediante el metodo de soluciones particulares, la pregunta fundamental es:
+
+\medskip
+\begin{center}
+\textit{Dado $b(x)$, ?`cual es el operador diferencial $\mathcal{L}$ optimo tal
+que la conversion sea eficiente, precisa y bien condicionada?}
+\end{center}
+\medskip
+
+Recordemos que la conversion descansa sobre encontrar $\hat{\phi}_j$ tal que
+$\mathcal{L}\hat{\phi}_j = f_j(r)$, y que la identidad de Green para $\mathcal{L}$
+transforma:
+
+\begin{equation}
+    \int_\Omega b(x)\, d\Omega \approx
+    \sum_j \alpha_j \int_\Omega \mathcal{L}\hat{\phi}_j\, d\Omega
+    = \sum_j \alpha_j \int_\Gamma \mathcal{B}[\hat{\phi}_j]\, d\Gamma
+    \label{eq:conversion}
+\end{equation}
+
+donde $\mathcal{B}$ es el operador de frontera emergente de la identidad de Green
+asociada a $\mathcal{L}$. La pregunta sobre la eleccion optima de $\mathcal{L}$
+involucra dos condiciones que no son independientes: que $b$ sea bien aproximable
+por la base $\{f_j\} = \{\mathcal{L}\hat{\phi}_j\}$, y que la identidad de Green
+para $\mathcal{L}$ convierta la integral de dominio en el menor numero posible de
+terminos de frontera.
+
+% ─────────────────────────────────────────────────────────────
+\section{Las Dos Condiciones de Golberg et al.}
+% ─────────────────────────────────────────────────────────────
+
+La referencia mas precisa sobre los criterios de eleccion de las funciones base
+es \cite{golberg1998comments}, donde se establecen dos condiciones necesarias que
+la base $\{f_j\}$ debe satisfacer:
+
+\begin{enumerate}
+    \item \textbf{Aproximacion precisa:} $\{f_j\}$ debe proporcionar una
+    aproximacion suficientemente precisa de $b(x)$ en los nodos de colocacion.
+    Esto es un requisito de densidad de la base en un espacio funcional apropiado.
+
+    \item \textbf{Integrabilidad analitica:} debe existir $\hat{\phi}_j$ en forma
+    cerrada tal que $\mathcal{L}\hat{\phi}_j = f_j$. Sin esto, la conversion a
+    integrales de frontera no es computable eficientemente.
+\end{enumerate}
+
+\begin{remark}
+Estas dos condiciones son necesarias pero no suficientes para optimalidad.
+No dicen nada sobre como elegir $\mathcal{L}$ dado $b$, sino que caracterizan
+que pares $(\mathcal{L}, \{f_j\})$ son admisibles una vez fijado el operador.
+\end{remark}
+
+Adicionalmente, \cite{golberg1999rbf} senala una observacion critica:
+
+\begin{quote}
+\textit{Existe una interaccion sutil entre el error de aproximacion RBF y el
+error BEM --- estos errores no son simplemente aditivos. Los estudios
+experimentales que discuten solo errores RBF pueden llegar a conclusiones
+erroneas sobre el error total en el DRM.}
+\end{quote}
+
+Este resultado subraya que la eleccion de $\mathcal{L}$ afecta no solo la
+aproximacion de $b$ sino tambien la propagacion del error en toda la cadena
+numerica.
+
+% ─────────────────────────────────────────────────────────────
+\section{El Metodo del Aniquilador: Marco Teorico}
+% ─────────────────────────────────────────────────────────────
+
+La conexion mas profunda entre $b(x)$ y $\mathcal{L}$ proviene de la teoria del
+\textbf{metodo del aniquilador}, generalizado a EDPs por \cite{golberg1999annihilator}.
+
+\subsection{Definicion de Aniquilador}
+
+Sea $\mathcal{A}$ un operador diferencial lineal. Se dice que $\mathcal{A}$ es
+\textbf{aniquilador} de $b(x)$ si:
+
+\begin{equation}
+    \mathcal{A}\, b(x) = 0
+\end{equation}
+
+En el caso de EDOs, si $b(x) = e^{\lambda x}$, entonces $\mathcal{A} = D - \lambda$
+es el aniquilador, ya que $(D - \lambda)e^{\lambda x} = 0$. Para
+$b(x) = \sin(kx)$, el aniquilador es $\mathcal{A} = D^2 + k^2$.
+
+\subsection{Extension a EDPs: el Resultado de Golberg-Chen-Rashed}
+
+\cite{golberg1999annihilator} generalizan este concepto a ecuaciones en derivadas
+parciales. La idea central es:
+
+\begin{equation}
+    \mathcal{A}\, b = 0 \implies
+    \text{usar } \mathcal{L} \text{ relacionado con } \mathcal{A}
+    \text{ como operador de la conversion}
+\end{equation}
+
+La logica es que si $b$ pertenece al espacio nulo de $\mathcal{A}$, entonces
+las funciones base $\{f_j\} = \{\mathcal{L}\hat{\phi}_j\}$ deben aproximar
+funciones en ese mismo espacio nulo, lo cual ocurre naturalmente cuando
+$\mathcal{L}$ esta relacionado con $\mathcal{A}$.
+
+Especificamente, si $\mathcal{A} = \nabla^2 + k^2$ (operador de Helmholtz) y
+$b$ es aproximadamente oscilatoria con numero de onda $k$, entonces usar
+$\mathcal{L} = \nabla^2 + k^2$ como operador de la conversion es
+\emph{compatible} con la estructura de $b$.
+
+\subsection{Aplicacion a las RBFs Poliharmonicas}
+
+\cite{golberg1999annihilator} aplican el metodo del aniquilador para encontrar
+$\hat{\phi}$ de manera sistematica cuando $f_j$ son \emph{thin plate splines}
+(TPS) y \emph{higher order splines}. El procedimiento es:
+
+\begin{enumerate}
+    \item Identificar el aniquilador $\mathcal{A}$ de $f_j(r)$.
+    \item Aplicar $\mathcal{A}$ a $\mathcal{L}\hat{\phi} = f_j$, obteniendo
+    $\mathcal{A}\mathcal{L}\hat{\phi} = \mathcal{A}f_j = 0$.
+    \item La ecuacion homogenea resultante es solucionable por metodos clasicos,
+    y comparando coeficientes se determina $\hat{\phi}$.
+\end{enumerate}
+
+Esto es una generalizacion del clasico metodo de coeficientes indeterminados
+de ODEs, y proporciona una receta sistematica para obtener $\hat{\phi}$ sin
+necesidad de adivinar su forma funcional.
+
+% ─────────────────────────────────────────────────────────────
+\section{Clasificacion de Operadores y sus Identidades de Green}
+% ─────────────────────────────────────────────────────────────
+
+La conversion \eqref{eq:conversion} requiere una identidad de Green para
+$\mathcal{L}$. La complejidad del operador de frontera $\mathcal{B}$ resultante
+depende del orden de $\mathcal{L}$. Se presenta una clasificacion de los casos
+mas relevantes en la literatura.
+
+\subsection{Operador de Laplace: $\mathcal{L} = \nabla^2$}
+
+La identidad de Green de primer orden:
+
+\begin{equation}
+    \int_\Omega \nabla^2\hat{\phi}\, d\Omega
+    = \int_\Gamma \frac{\partial\hat{\phi}}{\partial n}\, d\Gamma
+\end{equation}
+
+Un solo termino de frontera. Es la conversion mas limpia posible. Como muestra
+\cite{cheng2000polyharmonic}, para el operador de Laplace las soluciones
+particulares de funciones conicas y splines se obtienen por integracion
+repetida en la coordenada radial --- lo que desarrollamos explicitamente al
+derivar $\hat{\phi}$ para $f = 1 + r^3$:
+
+\begin{equation}
+    \frac{1}{r}\frac{d}{dr}\left(r\frac{d\hat{\phi}}{dr}\right) = f(r)
+    \implies \hat{\phi}(r) = \frac{r^2}{4} + \frac{r^5}{25}
+    \quad \text{para } f = 1 + r^3
+\end{equation}
+
+\textbf{Compatibilidad con $b$:} optimo cuando $b$ es una funcion suave sin
+estructura oscilatoria ni de decaimiento pronunciado. En ausencia de
+informacion sobre la naturaleza de $b$, $\nabla^2$ es la eleccion por
+defecto.
+
+\subsection{Operador de Helmholtz: $\mathcal{L} = \nabla^2 + k^2$}
+
+La identidad de Green para el operador de Helmholtz da:
+
+\begin{equation}
+    \int_\Omega (\nabla^2 + k^2)\hat{\phi}\, d\Omega
+    = \int_\Gamma \frac{\partial\hat{\phi}}{\partial n}\, d\Gamma
+    + k^2 \int_\Omega \hat{\phi}\, d\Omega
+\end{equation}
+
+Nótese que \textbf{no se elimina} la integral de dominio a menos que $k = 0$,
+ya que el termino $k^2\int_\Omega\hat{\phi}\,d\Omega$ persiste. Esto muestra
+que el operador de Helmholtz \textbf{no es adecuado} para la conversion pura
+de integrales de dominio que nos ocupa, aunque si lo es en el contexto de
+resolver EDPs de Helmholtz donde este termino se absorbe en la formulacion
+integral.
+
+\cite{muleshkov1999helmholtz} derivan soluciones particulares para operadores
+de tipo Helmholtz con splines poliharmonicos de orden superior, generalizando
+los resultados de \cite{golberg1999annihilator} para thin plate splines.
+
+\textbf{Compatibilidad con $b$:} optimo cuando $b$ tiene estructura oscilatoria
+con numero de onda caracteristico $k$, o cuando se resuelve una EDP de Helmholtz
+donde el termino fuente tiene esa naturaleza.
+
+\subsection{Operador de Helmholtz Modificado: $\mathcal{L} = \nabla^2 - \lambda^2$}
+
+La identidad es estructuralmente similar a la de Helmholtz:
+
+\begin{equation}
+    \int_\Omega (\nabla^2 - \lambda^2)\hat{\phi}\, d\Omega
+    = \int_\Gamma \frac{\partial\hat{\phi}}{\partial n}\, d\Gamma
+    - \lambda^2 \int_\Omega \hat{\phi}\, d\Omega
+\end{equation}
+
+El mismo problema persiste: hay un residuo de dominio. Las soluciones
+particulares para este operador tienen interes en problemas de difusion-reaccion
+donde $b$ tiene estructura de decaimiento exponencial con escala $\lambda^{-1}$.
+
+\subsection{Operador Biharmonico: $\mathcal{L} = \nabla^4$}
+
+La identidad de Green de cuarto orden es:
+
+\begin{equation}
+    \int_\Omega \hat{\phi}\,\nabla^4 u\, d\Omega
+    = \int_\Gamma \left(
+    \hat{\phi}\frac{\partial\nabla^2 u}{\partial n}
+    - \frac{\partial\hat{\phi}}{\partial n}\nabla^2 u
+    + \nabla^2\hat{\phi}\frac{\partial u}{\partial n}
+    - u\frac{\partial\nabla^2\hat{\phi}}{\partial n}
+    \right) d\Gamma
+\end{equation}
+
+Tomando $u = 1$ toda la integral de dominio se convierte en frontera, pero con
+\textbf{cuatro terminos} en lugar de uno. La complejidad es mayor, pero la
+conversion es exacta en frontera.
+
+\cite{muleshkov2007multihelmholtz} desarrollan soluciones particulares para
+operadores multi-Helmholtz de la forma
+$\prod_{i=1}^m (\nabla^2 \pm k_i^2)$, que por el teorema de Hormander
+\cite{tsai2009splines} cubren muchos sistemas de EDPs de ingenieria al
+factorizar su operador determinante.
+
+\textbf{Compatibilidad con $b$:} optimo cuando $b$ tiene estructura biharmonica,
+por ejemplo en problemas de placas elasticas donde la deflexion satisface
+$\nabla^4 w = q/D$.
+
+\subsection{Tabla Comparativa}
+
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+Operador $\mathcal{L}$ & Terminos en $\partial\Omega$ & Residuo dominio
+    & Compatibilidad con $b$ \\
+\midrule
+$\nabla^2$ & 1 & No
+    & $b$ suave, general \\
+$\nabla^2 + k^2$ & 1 & Si ($k^2\int\hat\phi$)
+    & $b$ oscilatoria, escala $k$ \\
+$\nabla^2 - \lambda^2$ & 1 & Si ($\lambda^2\int\hat\phi$)
+    & $b$ difusiva, escala $\lambda^{-1}$ \\
+$\nabla^4$ & 4 & No
+    & $b$ biharmonica \\
+$\prod_i(\nabla^2 \pm k_i^2)$ & $2m$ & No (con $u=1$)
+    & $b$ en espacio nulo del operador \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ─────────────────────────────────────────────────────────────
+\section{Hipotesis de Compatibilidad Optima}
+% ─────────────────────────────────────────────────────────────
+
+Con base en la teoria del aniquilador y la literatura revisada, pueden
+formularse las siguientes hipotesis:
+
+\begin{hypothesis}[Compatibilidad espectral]
+\label{hyp:espectral}
+Sea $\mathcal{A}$ el aniquilador de $b$, es decir $\mathcal{A}b = 0$. La
+conversion de $\int_\Omega b\,d\Omega$ a integrales de frontera es
+\textbf{exacta} cuando $\mathcal{L} = \mathcal{A}$, porque en ese caso la
+base $\{f_j\} = \{\mathcal{L}\hat{\phi}_j\}$ puede reproducir exactamente
+$b$ en el espacio nulo de $\mathcal{A}$.
+\end{hypothesis}
+
+\begin{hypothesis}[Minimalidad de terminos de frontera]
+\label{hyp:minimalidad}
+El operador optimo para la conversion pura de integrales de dominio (sin EDP
+de fondo) es aquel de orden minimo cuya identidad de Green no genera residuos
+de dominio al tomar $u = \text{const}$. El operador de Laplace $\nabla^2$ es
+el unico operador de segundo orden que satisface esta condicion.
+\end{hypothesis}
+
+\begin{hypothesis}[Jerarquia poliharmonica]
+\label{hyp:jerarquia}
+Para $b$ con estructura que puede expresarse como combinacion de funciones en
+el espacio nulo de un operador poliharmonico $\nabla^{2m}$ o de un producto
+de operadores de Helmholtz $\prod_i(\nabla^2 \pm k_i^2)$, usar el operador
+correspondiente como $\mathcal{L}$ minimiza el numero de nodos de colocacion
+necesarios para una precision dada, porque las funciones base son exactamente
+del tipo correcto para representar $b$.
+\end{hypothesis}
+
+\begin{remark}
+Las hipotesis anteriores son consistentes con la literatura pero, hasta donde
+es conocido, no existe una prueba formal de optimalidad que, dado solo $b(x)$
+como funcion conocida y sin una EDP de fondo, permita seleccionar $\mathcal{L}$
+de forma que minimice el error de cuadratura resultante. Esta es una pregunta
+abierta de investigacion.
+\end{remark}
+
+% ─────────────────────────────────────────────────────────────
+\section{El Enfoque de Hormander y los Productos de Helmholtz}
+% ─────────────────────────────────────────────────────────────
+
+Un resultado particularmente poderoso, discutido en \cite{tsai2009splines}, es
+la aplicacion de la teoria de Hormander para operadores diferenciales lineales.
+Muchos sistemas de EDPs de ingenieria tienen la propiedad de que el determinante
+de su operador matricial es un producto de operadores de Helmholtz o
+poliharmonicos:
+
+\begin{equation}
+    \det(\mathcal{L}_{ij}) = \prod_{p=1}^{m}(\nabla^2 \pm k_p^2)
+\end{equation}
+
+En estos casos, por el principio de Hormander, el sistema puede reducirse a
+ecuaciones escalares con estos operadores, y las soluciones particulares para
+los operadores de tipo Helmholtz y poliharmonico que se derivan en
+\cite{muleshkov2007multihelmholtz} y \cite{tsai2009splines} cubren una clase
+muy amplia de problemas de ingenieria.
+
+El enfoque alternativo del \textbf{Radial Integration Method} (RIM) de
+\cite{gao2002rim} es notable porque no usa $\mathcal{L}$ en absoluto: la
+conversion a integrales de frontera se hace puramente por transformacion
+geometrica en coordenadas esfericas, sin requerir que $b$ sea compatible con
+ningun operador. Esto lo hace universalmente aplicable, aunque pierde la
+eficiencia que se obtiene cuando hay compatibilidad entre $b$ y $\mathcal{L}$.
+
+% ─────────────────────────────────────────────────────────────
+\section{Consecuencias Practicas para el Curso}
+% ─────────────────────────────────────────────────────────────
+
+La discusion teorica anterior tiene consecuencias practicas concretas que
+pueden resumirse en los siguientes principios de diseno:
+
+\textbf{Principio 1 --- Por defecto, usar $\nabla^2$:} en ausencia de
+informacion sobre la naturaleza de $b$, el operador de Laplace es la eleccion
+mas robusta porque genera un solo termino de frontera, admite RBFs con
+$\hat{\phi}$ en forma cerrada, y el sistema de colocacion es generalmente
+bien condicionado.
+
+\textbf{Principio 2 --- Explotar la estructura de $b$ si se conoce:} si $b$
+es oscilatoria con escala caracteristica conocida, usar $\mathcal{L} = \nabla^2
++ k^2$ permite que las funciones base sean del tipo correcto. Si $b$ tiene
+estructura biharmonica, usar $\nabla^4$.
+
+\textbf{Principio 3 --- El aniquilador como guia:} si $b$ satisface una EDP
+homogenea $\mathcal{A}b = 0$ (aunque sea aproximadamente), el operador
+$\mathcal{A}$ es el candidato natural para $\mathcal{L}$.
+
+\textbf{Principio 4 --- Verificar la eliminacion del dominio:} antes de usar
+un operador dado, verificar que su identidad de Green con $u = \text{const}$
+no genera terminos de dominio residuales. Solo $\nabla^2$ y $\nabla^{2m}$
+(y sus productos con condiciones apropiadas) satisfacen esto.
+
+\textbf{Pregunta de investigacion abierta:} dada unicamente $b(x)$ como
+funcion numericamente conocida en un conjunto de puntos, ?`existe un criterio
+a priori para seleccionar $\mathcal{L}$ que minimice el error de la cuadratura
+resultante? La respuesta no es conocida en general.
+
+\bibliographystyle{unsrt}
+\bibliography{operador_b}
+
+\end{document}
