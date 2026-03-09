@@ -1,0 +1,34 @@
+\contentsline {section}{\numberline {1}Motivacion Fisica: Trabajo en un Campo de Fuerza}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Definicion de Trabajo}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Por que no Puede Evaluarse Directamente}{2}{subsection.1.2}%
+\contentsline {section}{\numberline {2}La Parametrizacion como Solucion}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Reduccion a una Integral Ordinaria}{2}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Ejemplo Analitico: Campo Rotacional sobre el Semicirculo}{3}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Discretizacion en Elementos}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Necesidad de Discretizar}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Division en $N_e$ Elementos}{4}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Tres Tipos de Elementos}{4}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Elemento Constante}{4}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Elemento Lineal}{4}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}Elemento Cuadratico}{5}{subsubsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.4}Elemento Lineal: Desarrollo Completo}{5}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Resultado Final Ensamblado}{5}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Separacion de Fuentes de Error}{6}{section.4}%
+\contentsline {section}{\numberline {5}Resultados Numericos}{6}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Caso (a): Integracion sobre la Curva Exacta}{6}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Caso (b): Elementos Lineales con $n_g = 4$ fijo}{6}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Dominancia del Error Geometrico}{7}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Segundo Campo: $\mathbf {F} = (x^2, y^2)$}{7}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Conexion con BEM}{7}{section.6}%
+\contentsline {section}{\numberline {7}Preguntas Propuestas}{8}{section.7}%
+\contentsline {section}{\numberline {8}Fuerzas Radiales: Gravedad y Potencial de Lennard-Jones}{8}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Planteamiento General de una Fuerza Radial}{8}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Campo Gravitacional / Coulombiano}{9}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Potencial de Lennard-Jones}{9}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Verificacion por Independencia del Camino}{10}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Resultados Numericos}{10}{subsection.8.5}%
+\contentsline {subsubsection}{\numberline {8.5.1}Campo Gravitacional ($k=1$, $r_A = r_B = 2$)}{10}{subsubsection.8.5.1}%
+\contentsline {subsubsection}{\numberline {8.5.2}Potencial de Lennard-Jones ($\varepsilon =1$, $\sigma =1$, $r_A=r_B=2$)}{11}{subsubsection.8.5.2}%
+\contentsline {subsection}{\numberline {8.6}Near-Singularity: Trayectoria Cercana al Origen}{11}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.7}Convergencia para Lennard-Jones con $r_A \neq r_B$}{11}{subsection.8.7}%
+\contentsline {subsection}{\numberline {8.8}Preguntas Propuestas}{12}{subsection.8.8}%
