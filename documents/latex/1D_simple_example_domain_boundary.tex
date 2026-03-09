@@ -1,0 +1,389 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{parskip}
+
+\geometry{margin=2.5cm}
+
+\hypersetup{colorlinks=true, linkcolor=blue!60!black,
+            citecolor=blue!60!black, urlcolor=blue!60!black}
+
+\newtheorem{remark}{Observacion}
+
+\title{\textbf{Cuadratura mediante Reciprocidad Dual en 1D}\\[0.5em]
+\large Analogia con el Caso 2D y Fundamentos del Metodo\\[0.3em]
+\normalsize Notas para un Curso de Maestria en Boundary Element Method}
+\author{W.F. Florez\\
+\small Wessex Institute of Technology}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% ─────────────────────────────────────────────────────────────
+\section{Motivacion: El Caso 1D como Punto de Partida}
+% ─────────────────────────────────────────────────────────────
+
+Antes de abordar la conversion de integrales de dominio en 2D mediante el
+metodo de soluciones particulares, es instructivo estudiar el caso
+unidimensional. En 1D toda la maquinaria del metodo se reduce a sus elementos
+esenciales, sin la complejidad geometrica de la frontera ni la necesidad de
+cuadratura sobre elementos. Esto permite aislar y estudiar de forma pura el
+error de colocacion RBF, que es una de las dos fuentes de error presentes
+en el caso 2D.
+
+% ─────────────────────────────────────────────────────────────
+\section{Planteamiento del Problema}
+% ─────────────────────────────────────────────────────────────
+
+Se desea evaluar la integral:
+
+\begin{equation}
+    I = \int_a^b g(x)\, dx
+    \label{eq:integral_1d}
+\end{equation}
+
+La estrategia es aproximar $g(x)$ mediante una combinacion lineal de
+funciones base $\{f_i(x)\}$ evaluadas en $N$ nodos de colocacion
+$\{x_i\}_{i=1}^N \subset (a,b)$:
+
+\begin{equation}
+    g(x) \approx \sum_{i=1}^{N} \alpha_i f_i(x)
+    \label{eq:aprox_g}
+\end{equation}
+
+y convertir la integral de dominio en una evaluacion en los extremos
+$\{a, b\}$ (la ``frontera'' del intervalo en 1D).
+
+% ─────────────────────────────────────────────────────────────
+\section{Conversion de la Integral: el Teorema Fundamental del Calculo}
+% ─────────────────────────────────────────────────────────────
+
+\subsection{Condicion sobre las Funciones Base}
+
+Se exige que cada $f_i(x)$ sea la derivada de alguna funcion $\phi_i(x)$:
+
+\begin{equation}
+    \frac{d\phi_i(x)}{dx} = f_i(x)
+    \label{eq:condicion_phi}
+\end{equation}
+
+Esta es la condicion analoga a $\nabla^2\hat{\phi}_i = f_i(r)$ en el caso 2D:
+se fuerza que la funcion base sea la imagen de un operador diferencial que
+admite una identidad integral.
+
+\subsection{Conversion}
+
+Sustituyendo \eqref{eq:aprox_g} y \eqref{eq:condicion_phi} en
+\eqref{eq:integral_1d}:
+
+\begin{align}
+    I &= \int_a^b g(x)\,dx
+     \approx \sum_{i=1}^{N} \alpha_i \int_a^b f_i(x)\,dx
+     = \sum_{i=1}^{N} \alpha_i \int_a^b \frac{d\phi_i}{dx}\,dx
+\end{align}
+
+Aplicando el \textbf{Teorema Fundamental del Calculo}:
+
+\begin{equation}
+    \int_a^b \frac{d\phi_i}{dx}\,dx = \left[\phi_i(x)\right]_a^b
+    = \phi_i(b) - \phi_i(a)
+\end{equation}
+
+y el resultado final es:
+
+\begin{equation}
+\boxed{
+    I \approx \sum_{i=1}^{N} \alpha_i \bigl(\phi_i(b) - \phi_i(a)\bigr)
+}
+\label{eq:resultado_1d}
+\end{equation}
+
+La integral de dominio queda expresada como una \textbf{evaluacion puntual
+en los extremos del intervalo}, sin ninguna cuadratura adicional.
+
+\begin{remark}
+El Teorema Fundamental del Calculo es precisamente el Teorema de la
+Divergencia en 1D. La ``frontera'' del intervalo $(a,b)$ son los dos
+puntos $\{a, b\}$, y la ``integral de frontera''
+$\int_\Gamma \frac{\partial\hat\phi}{\partial n}\,d\Gamma$ se reduce a
+$\phi(b)\cdot(+1) + \phi(a)\cdot(-1) = \phi(b) - \phi(a)$,
+donde $\pm 1$ son las normales exteriores en cada extremo.
+\end{remark}
+
+% ─────────────────────────────────────────────────────────────
+\section{Tabla Comparativa: 1D vs 2D}
+% ─────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Elemento & 1D & 2D \\
+\midrule
+Integral de dominio
+    & $\displaystyle\int_a^b g\,dx$
+    & $\displaystyle\int_\Omega b\,d\Omega$ \\[1em]
+Condicion sobre base
+    & $\dfrac{d\phi_i}{dx} = f_i$
+    & $\nabla^2\hat\phi_i = f_i(r)$ \\[1em]
+Identidad integral
+    & Teorema Fundamental
+    & Teorema de la Divergencia \\[0.5em]
+``Frontera''
+    & Dos puntos $\{a,\,b\}$
+    & Curva $\Gamma$ \\[0.5em]
+Evaluacion en frontera
+    & $\phi_i(b) - \phi_i(a)$
+    & $\displaystyle\int_\Gamma \frac{\partial\hat\phi_i}{\partial n}\,d\Gamma$ \\[1em]
+Cuadratura sobre $\Gamma$
+    & No necesaria
+    & Cuadratura de Gauss por elemento \\[0.5em]
+Fuentes de error
+    & Solo colocacion RBF
+    & Geometria + colocacion RBF \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ─────────────────────────────────────────────────────────────
+\section{Obtencion de $\phi_i(x)$ para la RBF $f_i = 1 + |x - x_i|^3$}
+% ─────────────────────────────────────────────────────────────
+
+\subsection{Integracion Directa}
+
+Se elige la funcion base radial 1D:
+
+\begin{equation}
+    f_i(x) = 1 + |x - x_i|^3, \qquad r_i = x - x_i
+\end{equation}
+
+Hay que resolver $\dfrac{d\phi_i}{dx} = 1 + |r_i|^3$ integrando directamente.
+El termino constante integra trivialmente. Para el termino $|r_i|^3$,
+observamos que:
+
+\begin{equation}
+    \frac{d}{dx}\bigl[r_i\,|r_i|^3\bigr]
+    = |r_i|^3 + r_i \cdot 3|r_i|^2\,\text{sgn}(r_i)
+    = |r_i|^3 + 3|r_i|^3 = 4|r_i|^3
+\end{equation}
+
+por tanto:
+
+\begin{equation}
+    \int |r_i|^3\,dx = \frac{r_i\,|r_i|^3}{4} + C
+    = \frac{(x-x_i)|x-x_i|^3}{4} + C
+\end{equation}
+
+\subsection{Resultado}
+
+Tomando la constante de integracion $C = 0$:
+
+\begin{equation}
+\boxed{
+    \phi_i(x) = x + \frac{(x - x_i)\,|x - x_i|^3}{4}
+}
+\label{eq:phi_1d}
+\end{equation}
+
+\subsection{Verificacion}
+
+Derivando \eqref{eq:phi_1d}:
+
+\begin{align}
+    \frac{d\phi_i}{dx}
+    &= 1 + \frac{d}{dx}\left[\frac{(x-x_i)|x-x_i|^3}{4}\right] \notag \\
+    &= 1 + \frac{|x-x_i|^3 + (x-x_i)\cdot 3|x-x_i|^2\,\text{sgn}(x-x_i)}{4} \notag \\
+    &= 1 + \frac{|x-x_i|^3 + 3|x-x_i|^3}{4} \notag \\
+    &= 1 + |x-x_i|^3 = f_i(x) \qquad \checkmark
+\end{align}
+
+% ─────────────────────────────────────────────────────────────
+\section{Determinacion de los Coeficientes $\alpha_i$ por Colocacion}
+% ─────────────────────────────────────────────────────────────
+
+Se conoce $g(x)$ en los $N$ nodos interiores $\{x_i\}_{i=1}^N \subset (a,b)$.
+Evaluando la aproximacion \eqref{eq:aprox_g} en cada nodo:
+
+\begin{equation}
+    g(x_k) = \sum_{j=1}^{N} \alpha_j f_j(x_k)
+    = \sum_{j=1}^{N} \alpha_j \bigl(1 + |x_k - x_j|^3\bigr),
+    \quad k = 1,\ldots,N
+\end{equation}
+
+lo que genera el sistema lineal:
+
+\begin{equation}
+    \mathbf{F}\,\boldsymbol{\alpha} = \mathbf{g},
+    \qquad F_{kj} = 1 + |x_k - x_j|^3,
+    \qquad g_k = g(x_k)
+\end{equation}
+
+con solucion:
+
+\begin{equation}
+    \boldsymbol{\alpha} = \mathbf{F}^{-1}\mathbf{g}
+\end{equation}
+
+\begin{remark}
+Los nodos de colocacion deben ser \textbf{interiores}: $x_i \in (a,b)$,
+nunca en los extremos $a$ o $b$. Si $x_i = a$ o $x_i = b$, entonces
+$\phi_i(a)$ o $\phi_i(b)$ involucran $r_i = 0$, lo que no causa singularidad
+en 1D (a diferencia del caso 2D), pero si situa un nodo fuente sobre la
+``frontera'', lo cual es equivalente al problema de near-singularity en 2D.
+\end{remark}
+
+% ─────────────────────────────────────────────────────────────
+\section{Algoritmo Completo}
+% ─────────────────────────────────────────────────────────────
+
+El procedimiento completo para evaluar $I = \int_a^b g(x)\,dx$ es:
+
+\begin{enumerate}
+    \item Elegir $N$ nodos de colocacion interiores
+    $\{x_i\}_{i=1}^N \subset (a,b)$.
+
+    \item Evaluar $g(x_i)$ en cada nodo para construir $\mathbf{g}$.
+
+    \item Construir la matriz de colocacion $F_{ij} = 1 + |x_i - x_j|^3$.
+
+    \item Resolver $\mathbf{F}\boldsymbol{\alpha} = \mathbf{g}$.
+
+    \item Evaluar $\phi_i(b) - \phi_i(a)$ para cada $i$ usando
+    \eqref{eq:phi_1d}.
+
+    \item Calcular $I \approx \sum_{i=1}^N \alpha_i\bigl(\phi_i(b)
+    - \phi_i(a)\bigr)$.
+\end{enumerate}
+
+% ─────────────────────────────────────────────────────────────
+\section{Resultados Numericos}
+% ─────────────────────────────────────────────────────────────
+
+\subsection{Ejemplo Principal: $g(x) = x^2$ en $[0,1]$}
+
+La solucion analitica es:
+
+\begin{equation}
+    I = \int_0^1 x^2\,dx = \frac{1}{3}
+\end{equation}
+
+\subsubsection{Estudio de Convergencia}
+
+Se usan $N$ nodos equidistantes interiores en $(0,1)$ y se registra el
+error relativo y el condicionamiento de $\mathbf{F}$:
+
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+$N$ & $I_{\text{DR}}$ & Error (\%) & $\mathrm{cond}(\mathbf{F})$ \\
+\midrule
+ 2 & 0.2870370370 & 13.889  &         55 \\
+ 3 & 0.3196358268 &  4.109  &        155 \\
+ 5 & 0.3290538035 &  1.284  &      2\,715 \\
+ 8 & 0.3320184170 &  0.394  &     20\,518 \\
+12 & 0.3328809512 &  0.136  &    105\,141 \\
+20 & 0.3332212606 &  0.034  &    785\,205 \\
+\bottomrule
+\multicolumn{4}{r}{$I_{\text{exacta}} = 0.3333333333$}
+\end{tabular}
+\end{center}
+
+El error decrece monotonamente con $N$, pero el condicionamiento crece
+rapidamente --- de 55 con $N=2$ a mas de $10^5$ con $N=12$.
+
+\subsubsection{Tension entre Precision y Condicionamiento}
+
+Este resultado pone de manifiesto una tension fundamental en el metodo:
+aumentar $N$ mejora la aproximacion de $g$ pero deteriora el
+condicionamiento de $\mathbf{F}$. En 1D esta tension es visible de forma
+pura porque no hay error geometrico ni de cuadratura que la enmascare.
+En la practica existe un $N$ optimo que minimiza el error total teniendo
+en cuenta tanto la aproximacion RBF como la propagacion de errores de
+redondeo a traves de $\mathbf{F}^{-1}$.
+
+\subsection{Prueba con Distintas Funciones $g(x)$, $N=8$}
+
+\begin{center}
+\begin{tabular}{lrrl}
+\toprule
+$g(x)$ & $I_{\text{exacta}}$ & $I_{\text{DR}}$ & Error (\%) \\
+\midrule
+$x^2$       & 0.33333333 & 0.33201842 & 0.394 \\
+$x^3$       & 0.25000000 & 0.24750286 & 0.999 \\
+$x^4$       & 0.20000000 & 0.19572460 & 2.138 \\
+$\sin(\pi x)$ & 0.63661977 & 0.64193920 & 0.836 \\
+$e^x$       & 1.71828183 & 1.72011136 & 0.106 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Se observa que el error crece con el grado del polinomio: la RBF
+$f = 1 + |r|^3$ aproxima mejor funciones de bajo grado, consistente con
+el hecho de que el spline cubico $|r|^3$ reproduce exactamente polinomios
+hasta grado 3 pero no mas alla.
+
+% ─────────────────────────────────────────────────────────────
+\section{Observaciones Pedagogicas}
+% ─────────────────────────────────────────────────────────────
+
+\subsection{Aislamiento del Error de Colocacion RBF}
+
+En 1D el unico error presente es el de colocacion RBF. No hay:
+\begin{itemize}
+    \item error geometrico (la ``frontera'' $\{a,b\}$ es exacta),
+    \item error de cuadratura sobre $\Gamma$ (la evaluacion en $a$ y $b$
+    es exacta).
+\end{itemize}
+
+Esto hace del caso 1D el laboratorio ideal para estudiar el error de
+aproximacion RBF de forma pura, antes de introducir las fuentes adicionales
+de error presentes en 2D.
+
+\subsection{Secuencia Pedagogica Recomendada}
+
+La progresion natural para el curso es:
+
+\begin{enumerate}
+    \item \textbf{Caso 1D:} motivacion limpia, sin geometria.
+    Error unico: colocacion RBF. La ``cuadratura de frontera'' es
+    simplemente $\phi_i(b) - \phi_i(a)$.
+
+    \item \textbf{Caso 2D, dominio cuadrado:} geometria exacta con
+    elementos constantes. Aparece la cuadratura de Gauss sobre $\Gamma$,
+    pero sin error geometrico. Las dos fuentes de error son: RBF y Gauss.
+
+    \item \textbf{Caso 2D, dominio circular:} geometria aproximada por
+    cuerdas. Las tres fuentes de error estan presentes: RBF, Gauss, y
+    geometria. Se estudia la necesidad de refinar ambas discretizaciones
+    en forma coordinada.
+\end{enumerate}
+
+\subsection{Preguntas Propuestas para el Estudiante}
+
+\begin{enumerate}
+    \item Mostrar que la eleccion de la constante de integracion $C$
+    en \eqref{eq:phi_1d} no afecta el resultado \eqref{eq:resultado_1d}.
+
+    \item Derivar $\phi_i(x)$ para $f_i(x) = e^{-\beta(x-x_i)^2}$
+    (RBF Gaussiana 1D) y discutir si la integral puede obtenerse en
+    forma cerrada.
+
+    \item Para $g(x) = x^n$ con $n$ entero, determinar cuantos nodos
+    de colocacion $N$ son necesarios para que el error sea menor que
+    $10^{-4}$, y graficar la tension error-condicionamiento.
+
+    \item Comparar el resultado de la cuadratura DR con la regla de
+    Simpson y la cuadratura de Gauss para el mismo numero de evaluaciones
+    de $g(x)$. ?`Cuando es ventajosa la estrategia DR?
+\end{enumerate}
+
+\end{document}
